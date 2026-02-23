@@ -1,149 +1,61 @@
-# Open Ledger
+## What is Summa?
 
-A flexible open-source ledger for tracking any type of asset. Store, manage, and audit all your transactions in one place.
+Summa is a **general-purpose open-source ledger** designed to record any type of asset transaction. This can include financial transactions, loyalty and gaming points transactions, logistic transactions, and more.
 
-## Core Concepts
+The modern transactional world demands systems that can handle complex movements of assets while maintaining **high levels of consistency, availability, and instantaneity**. These attributes are notoriously challenging to achieve to any degree of simultaneity with traditional tools.
 
-The ledger is built on four simple primitives:
+## How Summa Achieves These Attributes?
 
-- **Asset**: Any unit of value you want to track. Examples: BRL, USD, Points, Tokens, Items.
-- **Account**: A container that holds a balance of a specific asset. Examples: user wallets, credit accounts, savings accounts, checking accounts, inventory warehouse.
-- **Transaction**: A record of a financial event, composed of multiple operations. A transaction is the unit of work and is always balanced (debits must equal credits).
-- **Operation**: The most granular unit of movement, representing a single debit or credit to an account.
+<!-- Talk about TigerBeetle and importante advantages that it brings that make Summa fast -->
 
-## Core Features
+- Strict Serializability:
+- ACID-compliant:
+- Single-threaded: (say something about shard too)
+- Batching:
+- High Availability:
+- Extreme Engineering:
+- Storage Fault Tolerance:
 
-**⚖️ Double-Entry Bookkeeping**
+### So, Why Not Use TigerBeetle Directly?
 
-At its core, the ledger enforces double-entry accounting. Every movement of value is recorded as a balanced journal entry, ensuring your financial data remains consistent and verifiable.
+<!-- talk also that tigerbeetle is a low level database, a trusted component -->
+<!-- after all, introduces Identity and Access Management -->
 
-**⚙️ Asset-Agnostic Design**
+## Identity and Access Management
 
-Track anything of value. The ledger handles multiple, distinct asset types in a single system - from fiat currencies and crypto to loyalty points and inventory items.
+Summa supports OAuth2 by default to allow own IAM providers. And for access 
 
-**🔀 Compound (N:N) Transactions**
+## Data Schema
 
-Go beyond simple A-to-B transfers. Natively supports multi-legged transactions to model complex events (many-to-many) in one atomic operation. Perfect for marketplace payouts, payroll, split payments, and applying service fees.
+Summa is built on simple, yet powerful primitives:
+- **Asset**: any unit of value (USD, EUR, Loyalty Points, Tokens...).
+- **Account**: a container for a specific asset balance (Checking, Savings, Wallets, Liabilities, Revenues, Expenses...).
+- **Balance**: the current amount held in an account for a specific asset.
+- **Transaction**: an atomic financial event composed of multiple postings.
+- **Operation**: the granular unit of movement (debit/credit) that must always balance to zero.
 
-**📜 Immutable Append-Only Log**
+## Getting Started
 
-Transactions are recorded permanently and cannot be altered. Corrections are made via new, reversing entries, which maintains a full and transparent audit trail essential for compliance.
+### Running with Docker
 
-## Technical Features
+The fastest way to get Summa up in a development environment and running is via Docker Compose:
 
-**🕵️‍♂️ Optimistic Concurrency**
+```shell
+# Clone the repository
+git clone git@github.com:gabrielribeirof/summa.git
+cd summa
 
-Achieves high throughput via **account-level optimistic concurrency**. Instead of locking, the system uses a versioning mechanism to ensure data integrity, allowing conflicting transactions to fail safely and be retried.
-
-**🏗️ Domain-Driven Design**
-
-The codebase is built around core business concepts (Assets, Accounts, Transactions). This DDD approach makes the system intuitive to understand, maintain, and extend.
-
-**🔌 REST API**
-
-The ledger is exposed via a clean and stateless REST API. To enable seamless system-level integration, the API is fully documented using the OpenAPI Specification. This allows teams to explore endpoints via Swagger UI and auto-generate client libraries for any language or framework.
-
-**🚧 Backoffice (TBC)**
-
-A dedicated UI for administrative monitoring and manual journal entries is on the project roadmap.
-
-**✅ Comprehensive Testing**
-
-Rigorously tested for reliability with a full suite of **unit**, **integration**, and **functional** tests that validate everything from isolated functions to complete business workflows.
-
-## Use Cases
-
-### 1. Core Banking
-
-A platform for users to store and transfer digital currency.
-
-- Assets: USD
-- Accounts: UserWallet_Alice, UserWallet_Bob, CorporateRevenue
-
-Example: Alice sends $50 to Bob, and the platform charges a $1 fee.
-
-```
-Transaction: P2P Transfer with Fee
-  Operations:
-    Debit:  Accounts.UserWallet_Alice   USD 51.00
-    Credit: Accounts.UserWallet_Bob     USD 50.00
-    Credit: Accounts.CorporateRevenue   USD 1.00
-```
-
-### 2. Marketplace Payouts
-
-An e-commerce platform that processes sales and pays out to its vendors.
-
-- Assets: BRL
-- Accounts: PendingSales, VendorPayable_Jane, MarketplaceFees
-
-Example: A customer buys a product for $100, with the marketplace taking a 15% commission.
-
-```
-Transaction: Sale Payout
-  Operations:
-    Debit:  Accounts.PendingSales         USD 100.00
-    Credit: Accounts.VendorPayable_Jane   USD 85.00
-    Credit: Accounts.MarketplaceFees      USD 15.00
-```
-
-### 3. Supply Chain & Inventory
-
-A system to track the movement of physical goods from a supplier to a warehouse.
-
-- Assets: PRODUCT_SKU_XYZ
-- Accounts: SupplierStock, InTransit, Warehouse_A
-
-Example: 200 units of a product are shipped from the supplier to Warehouse A.
-
-```
-Transaction: Goods In Transit
-  Operations:
-    Debit:  Accounts.InTransit        PRODUCT_SKU_XYZ 200
-    Credit: Accounts.SupplierStock    PRODUCT_SKU_XYZ 200
-```
-
-## Development Environment
-
-In order to develop for this project you must have Docker and Docker Compose installed.
-
-1. Clone the repository
-
-```
-git clone git@github.com:gabrielribeirof/open-ledger.git
-cd open-ledger
-```
-
-2. Set up environment variables
-
-```
+# Set environment variables for local environment
 make set-env
-```
 
-3. Star the services
-
-```
+# Start all services
 make up
 ```
 
-4. Access the services
+## Acknowledgements & Inspirations
 
-- Core API: http://localhost:3000
-  - Core API Swagger: http://localhost:3000/swagger
+Summa is a practical exercise in high-performance software engineering, heavily inspired by:
 
-5. Explore makefile commands
+[Midaz by LerianStudio](https://github.com/LerianStudio/midaz) for the powerful reference in multi-asset accounting.
 
-```
-make help
-```
-
-And inside each `/apps` child folder.
-
-## Inspirations and Acknowledgments
-
-Beyond the goal of creating a functional product, this project also serves as a practical exercise in implementing specific software engineering techniques observed in high-quality, real-world applications.
-
-Special credit goes to the following projects, which served as significant sources of inspiration:
-
-- [PicPay - Backend Challenge](https://github.com/PicPay/picpay-desafio-backend): This challenge provides valuable insights into the architectural patterns and requirements for building a high-volume transactional system. It was an excellent reference for designing robust and scalable solutions.
-- [Midaz by LerianStudio](https://github.com/LerianStudio/midaz): As a comprehensive, open-source Core Ledger, Midaz provided a clear and powerful reference for the core domain of this project. Its approach to multi-asset accounting and cloud-native design was a major inspiration.
+[TigerBeetle](https://github.com/tigerbeetle/tigerbeetle) for setting the bar on performance and safety.
